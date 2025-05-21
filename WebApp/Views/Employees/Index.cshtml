@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Employees</h1>
+
+<table class="table" id="employeesTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- JS will populate rows here -->
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/api/EmployeeList/GetAll")
+                .then(response => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then(data => {
+                    const tbody = document.querySelector("#employeesTable tbody");
+                    tbody.innerHTML = "";
+
+                    data.forEach(employee => {
+                        const row = `
+                            <tr>
+                                <td>${employee.id}</td>
+                                <td>${employee.firstName}</td>
+                                <td>${employee.lastName}</td>
+                                <td>${employee.email}</td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML("beforeend", row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching employees:", error);
+                });
+        });
+    </script>
+}
